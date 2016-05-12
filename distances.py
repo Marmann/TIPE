@@ -1,7 +1,10 @@
 import requests
 import numpy as np
+import os
 
-cleAPI = 'AIzaSyDX5Je-aHHsW3iI_o8D0VlCLFM2kC8H1rE'
+os.chdir('/home/hichem/TIPE 2')
+
+cleAPI = 'AIzaSyDX5Je-aHHsW3iI_o8D0VlCLFM2kC8H1rE' #API Google Maps
 
 champ_distances_h = dict() #h pour hors-ligne, distances obtenues uniquement à partir des coordonnées GPS avec un calcul simple prenant en compte la courbure de la Terre
 
@@ -26,7 +29,7 @@ def distance_h(s1,s2):
     lng2 = (c2[1]/180) * np.pi
     a= np.sin(lat1)*np.sin(lat2)+np.cos(lat1)*np.cos(lat2)*np.cos(lng2-lng1)
     if abs(a)<= 1:
-        return 60*(180/np.pi)*np.arccos(a)*1852
+        return 1.5*60*(180/np.pi)*np.arccos(a)*1852
     if s1 ==s2:
         return 0
 
@@ -35,6 +38,16 @@ def maj_distances_h():
         champ_distances_h[s1] = dict()
         for s2 in stations_coord:
             champ_distances_h[s1][s2] = distance_h(s1,s2)
+
+def enregistrer_champ_distances_h():
+    with open('champ_dist_h','wb') as fichier:
+        mon_pickler = pickle.Pickler(fichier)
+        mon_pickler.dump(champ_distances_h)
+
+def recuperer_champ_distances_h():
+    with open('champ_dist_h','rb') as fichier:
+        mon_depickler = pickle.Unpickler(fichier)
+        champ_distances_h = mon_depickler.load()
 
 # 
 # def maj_distances_i_prim():
